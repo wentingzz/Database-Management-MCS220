@@ -123,4 +123,100 @@ CREATE TABLE CS220.Buys(
 
 
 
+-- HW3
+CREATE TABLE Ad(
+    	ad_id           	text NOT NULL,
+    	plan            	text NOT NULL ,
+    	content         	text,
+
+pic_num         	int NOT NULL,
+item_id         	text NOT NULL,
+seller_user_id 	text,
+	placed_date     	date NOT NULL,
+
+PRIMARY KEY (ad_id),
+FOREIGN KEY(pic_num, item_id) REFERENCES Picture(pic_num, item_id) ON DELETE CASCADE,
+FOREIGN KEY(seller_user_id) REFERENCES Seller(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE LocationBasedAd(
+    	ad_id           	text NOT NULL,
+    	city		text NOT NULL,
+state		text NOT NULL,
+    	PRIMARY KEY (ad_id, city, state),
+    	FOREIGN KEY(ad_id) REFERENCES Ad(ad_id) ON DELETE CASCADE
+);
+
+CREATE TABLE Ad(
+    	ad_id           	text NOT NULL,
+    	plan            	text NOT NULL ,
+    	content         	text,
+
+pic_num         	int NOT NULL,
+item_id         	text NOT NULL,
+	placed_date     	date NOT NULL,
+
+PRIMARY KEY (ad_id),
+FOREIGN KEY(pic_num, item_id) REFERENCES Picture(pic_num, item_id) ON DELETE CASCADE
+);
+
+CREATE TABLE LocationBasedAd(
+    	ad_id           	text NOT NULL,
+    	city		text NOT NULL,
+state		text NOT NULL,
+    	PRIMARY KEY (ad_id, city, state),
+    	FOREIGN KEY(ad_id) REFERENCES Ad(ad_id) ON DELETE CASCADE
+);
+
+CREATE TABLE Item(
+item_id text NOT NULL,
+name text NOT NULL,
+price float NOT NULL,
+category text NOT NULL,
+description text,
+seller_user_id text NOT NULL,
+list_date date NOT NULL,
+
+buyer_user_id text,
+purchase_date date,
+shipping_number text,
+shipping_street text,
+shipping_city text,
+shipping_state text,
+shipping_zip int,
+
+PRIMARY KEY (item_id),
+FOREIGN KEY(seller_user_id) REFERENCES Seller(user_id) ON DELETE CASCADE,
+FOREIGN KEY(buyer_user_id) REFERENCES Buyer(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE Item(
+item_id text NOT NULL,
+name text NOT NULL,
+price float NOT NULL,
+category text NOT NULL,
+description text,
+
+seller_user_id text NOT NULL,
+list_date date NOT NULL,
+
+buyer_user_id text,
+purchase_date date,
+
+shipping_number text,
+shipping_street text,
+shipping_city text,
+shipping_zip int,
+
+PRIMARY KEY (item_id),
+FOREIGN KEY(seller_user_id) REFERENCES Seller(user_id) ON DELETE CASCADE,
+FOREIGN KEY(buyer_user_id) REFERENCES Buyer(user_id) ON DELETE CASCADE,
+FOREIGN KEY(shipping_zip) REFERENCES ShippingLocation(shipping_zip)
+);
+
+CREATE TABLE ShippingLocation(
+	shipping_state text,
+shipping_zip int,
+PRIMARY KEY (shipping_zip)
+);
 
