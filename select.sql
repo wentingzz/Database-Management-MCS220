@@ -44,3 +44,41 @@ SELECT ph.number
 FROM cs222p_interchange.Phone ph, cs222p_interchange.Item i
 WHERE i.seller_user_id = ph.user_id AND ph.kind = 'mobile' AND i.list_date = '2022-07-17'
 LIMIT 10
+
+
+-- HW6
+-- For all buyers who bought at least 3 items after the date 2022-07-24, list each buyer's user_id, first_name, and last_name.
+SELECT U.user_id, U.first_name, U.last_name
+FROM cs222p_interchange.User U
+INNER JOIN (
+	SELECT B.user_id
+	FROM cs222p_interchange.buyer B
+	WHERE (
+		SELECT COUNT(*)
+		FROM cs222p_interchange.item I
+		WHERE B.user_id = I.buyer_user_id AND I.purchase_date > '2022-07-24'
+	) >= 3
+) tmp ON tmp.user_id = U.user_id
+
+--Find the highest price for each item sold by the seller with user id 'S3AB0' for each category of item where they've had sales. Print the item_id, item_name, category, and price of these highest-price items.  Rank the output by price from highest to lowest.
+SELECT I1.item_id, I1."name", I1.category, I1.price
+FROM cs222p_interchange.item I1
+INNER JOIN (
+	SELECT MAX(I.price) as hprice, I.category
+	FROM cs222p_interchange.item I
+	WHERE I.seller_user_id = 'S3AB0'  --AND I.buyer_user_id IS NOT NULL
+	GROUP BY I.category) tmp ON tmp.hprice = I1.price AND tmp.category = I1.category
+ORDER BY I1.price DESC
+
+--For all unpurchased services that had an ad placed by its seller, list the seller's user_id and the item_id, item_name, price, category, ad_id, ad_plan, and number of pictures associated with the item. Limit your output to the top 10 results ordered from highest to lowest by price.
+SELECT I.seller_user_id, I.item_id, I."name", I.price, I.category, ad.ad_id, ad.plan, tmp.cnt
+FROM cs222p_interchange.item I
+INNER JOIN cs222p_interchange.service ON service.item_id = I.item_id AND I.buyer_user_id IS NULL
+INNER JOIN cs222p_interchange.ad ON ad.item_id = I.item_id AND ad.seller_user_id = I.seller_user_id
+INNER JOIN (
+	SELECT pic.item_id, COUNT(*) AS cnt
+	FROM cs222p_interchange.picture pic
+	GROUP BY pic.item_id
+) tmp ON tmp.item_id = I.item_id
+ORDER BY I.price DESC
+LIMIT 10
